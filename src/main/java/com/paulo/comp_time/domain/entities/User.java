@@ -1,4 +1,4 @@
-package com.paulo.comp_time.domain.entity;
+package com.paulo.comp_time.domain.entities;
 
 import com.paulo.comp_time.domain.enums.UserRole;
 import jakarta.persistence.*;
@@ -27,7 +27,15 @@ public class User implements UserDetails {
     private String name;
     private String email;
     private String password;
+    @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    public User(String name, String email, String password, UserRole role) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
