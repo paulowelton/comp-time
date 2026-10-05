@@ -17,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SectorController {
 
-    private SectorService sectorService;
+    private final SectorService sectorService;
 
     @GetMapping
     public ResponseEntity<List<SectorResponse>> getAll(

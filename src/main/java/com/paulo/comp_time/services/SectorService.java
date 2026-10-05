@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SectorService {
 
-    private SectorRepository sectorRepository;
+    private final SectorRepository sectorRepository;
 
     public List<Sector> getAll(boolean includeInactive) {
 
