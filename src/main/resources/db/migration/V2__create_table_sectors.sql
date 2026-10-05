@@ -1,5 +1,5 @@
 CREATE TABLE sectors(
     id SERIAL PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
-    active BOOLEAN NOT NULL
+    active BOOLEAN NOT NULL DEFAULT TRUE
 );

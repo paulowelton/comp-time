@@ -1,4 +1,8 @@
 package com.paulo.comp_time.dtos.requests;
 
-public record SectorRequest() {
+import jakarta.validation.constraints.NotBlank;
+
+public record SectorRequest(
+        @NotBlank String name
+) {
 }
