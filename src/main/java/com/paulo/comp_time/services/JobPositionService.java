@@ -1,6 +1,8 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.JobPosition;
+import com.paulo.comp_time.dtos.requests.JobPositionRequest;
+import com.paulo.comp_time.exceptions.JobPositionAlreadyExists;
 import com.paulo.comp_time.exceptions.JobPositionNotFoundException;
 import com.paulo.comp_time.repositories.JobPositionRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,5 +28,17 @@ public class JobPositionService {
     public JobPosition getById(String id) {
         return jobPositionRepository.findById(id)
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+    }
+
+    public JobPosition create(JobPositionRequest request) {
+        if (!jobPositionRepository.findByName(request.name()).isEmpty()) {
+            throw new JobPositionAlreadyExists("Job position already exists");
+        }
+
+        JobPosition jobPosition = new JobPosition(
+                request.name()
+        );
+
+        return jobPositionRepository.save(jobPosition);
     }
 }

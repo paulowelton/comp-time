@@ -27,4 +27,13 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(Map.of("message", exception.getMessage()));
     }
+
+    @ExceptionHandler(JobPositionAlreadyExists.class)
+    public ResponseEntity<Map<String, String>> handleJobPositionAlreadyExists(
+            JobPositionAlreadyExists exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", exception.getMessage()));
+    }
 }

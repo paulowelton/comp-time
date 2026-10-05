@@ -1,9 +1,12 @@
 package com.paulo.comp_time.controllers;
 
 import com.paulo.comp_time.domain.entities.JobPosition;
+import com.paulo.comp_time.dtos.requests.JobPositionRequest;
 import com.paulo.comp_time.dtos.responses.JobPositionResponse;
 import com.paulo.comp_time.services.JobPositionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,5 +46,17 @@ public class JobPositionController {
         ));
     }
 
+    @PostMapping
+    public ResponseEntity<JobPositionResponse> create(
+            @RequestBody @Valid JobPositionRequest request) {
 
+        JobPosition jobPosition = jobPositionService.create(request);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new JobPositionResponse(
+                        jobPosition.getName(),
+                        jobPosition.getActive()
+                ));
+    }
 }
