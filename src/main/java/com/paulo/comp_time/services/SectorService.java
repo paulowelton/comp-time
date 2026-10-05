@@ -2,17 +2,18 @@ package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.Sector;
 import com.paulo.comp_time.dtos.requests.SectorRequest;
+import com.paulo.comp_time.dtos.responses.SectorResponse;
+import com.paulo.comp_time.exceptions.SectorNotFoundException;
 import com.paulo.comp_time.repositories.SectorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class SectorService {
 
-    @Autowired
     private SectorRepository sectorRepository;
 
     public List<Sector> getAll(boolean includeInactive) {
@@ -26,7 +27,7 @@ public class SectorService {
 
     public Sector getById(String id) {
         return sectorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sector not found"));
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
     }
 
     public Sector create(SectorRequest request) {
@@ -39,12 +40,39 @@ public class SectorService {
 
     public Sector update(String id, SectorRequest request) {
         Sector sector = sectorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sector not found"));
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
 
         sector.setName(request.name());
 
         return sectorRepository.save(sector);
     }
 
+    public void delete(String id) {
+
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        sectorRepository.delete(sector);
+    }
+
+    public Sector deactivate(String id) {
+
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        sector.setActive(false);
+
+        return sectorRepository.save(sector);
+    }
+
+    public Sector activate(String id) {
+
+        Sector sector = sectorRepository.findById(id)
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        sector.setActive(true);
+
+        return sectorRepository.save(sector);
+    }
 
 }
