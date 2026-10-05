@@ -1,6 +1,7 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.JobPosition;
+import com.paulo.comp_time.exceptions.JobPositionNotFoundException;
 import com.paulo.comp_time.repositories.JobPositionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +21,10 @@ public class JobPositionService {
         }
 
         return jobPositionRepository.findAllByActiveTrue();
+    }
+
+    public JobPosition getById(String id) {
+        return jobPositionRepository.findById(id)
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
     }
 }
