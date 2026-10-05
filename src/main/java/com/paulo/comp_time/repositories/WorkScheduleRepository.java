@@ -1,4 +1,7 @@
 package com.paulo.comp_time.repositories;
 
-public interface WorkScheduleRepository {
+import com.paulo.comp_time.domain.entities.WorkSchedule;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, String> {
 }
