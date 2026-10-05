@@ -75,5 +75,36 @@ public class JobPositionController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable String id) {
 
+        jobPositionService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<JobPositionResponse> deactivate(
+            @PathVariable String id) {
+
+        JobPosition jobPosition = jobPositionService.deactivate(id);
+
+        return ResponseEntity.ok(new JobPositionResponse(
+                jobPosition.getName(),
+                jobPosition.getActive()
+        ));
+    }
+
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<JobPositionResponse> activate(
+            @PathVariable String id) {
+
+        JobPosition jobPosition = jobPositionService.activate(id);
+
+        return ResponseEntity.ok(new JobPositionResponse(
+                jobPosition.getName(),
+                jobPosition.getActive()
+        ));
+    }
 }

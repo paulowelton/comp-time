@@ -50,4 +50,30 @@ public class JobPositionService {
 
         return jobPositionRepository.save(jobPosition);
     }
+
+    public void delete(String id) {
+        JobPosition jobPosition = jobPositionRepository.findById(id)
+                        .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        jobPositionRepository.delete(jobPosition);
+    }
+
+    public JobPosition deactivate(String id) {
+        JobPosition jobPosition = jobPositionRepository.findById(id)
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        jobPosition.setActive(false);
+
+        return jobPositionRepository.save(jobPosition);
+    }
+
+    public JobPosition activate(String id) {
+        JobPosition jobPosition = jobPositionRepository.findById(id)
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        jobPosition.setActive(true);
+
+        return jobPositionRepository.save(jobPosition);
+    }
+
 }
