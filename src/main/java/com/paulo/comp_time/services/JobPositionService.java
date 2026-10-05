@@ -41,4 +41,13 @@ public class JobPositionService {
 
         return jobPositionRepository.save(jobPosition);
     }
+
+    public JobPosition update(String id, JobPositionRequest request) {
+        JobPosition jobPosition = jobPositionRepository.findById(id)
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        jobPosition.setName(request.name());
+
+        return jobPositionRepository.save(jobPosition);
+    }
 }

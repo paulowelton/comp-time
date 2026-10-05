@@ -59,4 +59,21 @@ public class JobPositionController {
                         jobPosition.getActive()
                 ));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<JobPositionResponse> update(
+            @RequestBody @Valid JobPositionRequest request,
+            @PathVariable String id) {
+
+        JobPosition jobPosition = jobPositionService.update(id, request);
+
+        return ResponseEntity.ok(
+                new JobPositionResponse(
+                        jobPosition.getName(),
+                        jobPosition.getActive()
+                )
+        );
+    }
+
+
 }
