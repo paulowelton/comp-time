@@ -6,8 +6,10 @@ import com.paulo.comp_time.dtos.requests.UserRegisterRequest;
 import com.paulo.comp_time.dtos.responses.LoginResponse;
 import com.paulo.comp_time.dtos.responses.UserRegisterResponse;
 import com.paulo.comp_time.repositories.UserRepository;
+import com.paulo.comp_time.services.AuthenticationService;
 import com.paulo.comp_time.services.TokenService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,46 +24,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private TokenService tokenService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody @Valid UserLoginRequest request) {
-        UsernamePasswordAuthenticationToken usernamePassword = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody @Valid UserLoginRequest request) {
 
-        Authentication authentication = this.authenticationManager.authenticate(usernamePassword);
-
-        User user = (User) authentication.getPrincipal();
-
-        String token = tokenService.generateToken(user);
-
-        return ResponseEntity.ok(new LoginResponse(token));
+        return ResponseEntity.ok(authenticationService.login(request));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserRegisterResponse> register(@RequestBody @Valid UserRegisterRequest request) {
-        if(this.userRepository.findByEmail(request.email()) != null) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<UserRegisterResponse> register(
+            @RequestBody @Valid UserRegisterRequest request) {
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(request.password());
-
-        User user = new User(
-                request.name(),
-                request.email(),
-                encryptedPassword,
-                request.role()
-        );
-
-        userRepository.save(user);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserRegisterResponse(user.getName(), user.getEmail()));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(authenticationService.register(request));
     }
 }
