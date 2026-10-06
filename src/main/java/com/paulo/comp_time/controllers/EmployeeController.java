@@ -6,10 +6,7 @@ import com.paulo.comp_time.mappers.EmployeeMapper;
 import com.paulo.comp_time.services.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,5 +29,18 @@ public class EmployeeController {
 
         return ResponseEntity.ok(employees);
     }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<EmployeeResponse> getById(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                employeeMapper.toResponse(
+                        employeeService.getById(id)
+                )
+        );
+    }
+
+
 
 }

@@ -1,6 +1,7 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.Employee;
+import com.paulo.comp_time.exceptions.EmployeeNotFoundException;
 import com.paulo.comp_time.repositories.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,5 +22,8 @@ public class EmployeeService {
         return employeeRepository.findAllByActiveTrue();
     }
 
-
+    public Employee getById(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+    }
 }
