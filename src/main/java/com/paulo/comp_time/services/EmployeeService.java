@@ -100,4 +100,22 @@ public class EmployeeService {
 
         employeeRepository.delete(employee);
     }
+
+    public EmployeeResponse activate(Long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+
+        employee.setActive(true);
+
+        return employeeMapper.toResponse(employee);
+    }
+
+    public EmployeeResponse deactivate(Long id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+
+        employee.setActive(false);
+
+        return employeeMapper.toResponse(employee);
+    }
 }

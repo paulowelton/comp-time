@@ -59,4 +59,17 @@ public class EmployeeController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/{id}/activate")
+    public ResponseEntity<EmployeeResponse> activate(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(employeeService.activate(id));
+    }
+
+    @PostMapping("/{id}/deactivate")
+    public ResponseEntity<EmployeeResponse> deactivate(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(employeeService.deactivate(id));
+    }
 }
