@@ -1,6 +1,7 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.Employee;
+import com.paulo.comp_time.exceptions.EmployeeAlreadyExistsException;
 import com.paulo.comp_time.exceptions.EmployeeNotFoundException;
 import com.paulo.comp_time.repositories.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,13 @@ public class EmployeeService {
     public Employee getById(Long id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+    }
+
+    public Employee create(Employee employee) {
+        if (!employeeRepository.findByCpf(employee.getCpf()).isEmpty()) {
+            throw  new EmployeeAlreadyExistsException("The employee's CPF is already registered");
+        }
+
+        return employeeRepository.save(employee);
     }
 }
