@@ -1,12 +1,22 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.Employee;
+import com.paulo.comp_time.domain.entities.JobPosition;
+import com.paulo.comp_time.domain.entities.Sector;
+import com.paulo.comp_time.dtos.requests.EmployeeRequest;
+import com.paulo.comp_time.dtos.responses.EmployeeResponse;
 import com.paulo.comp_time.exceptions.EmployeeAlreadyExistsException;
 import com.paulo.comp_time.exceptions.EmployeeNotFoundException;
+import com.paulo.comp_time.exceptions.JobPositionNotFoundException;
+import com.paulo.comp_time.exceptions.SectorNotFoundException;
+import com.paulo.comp_time.mappers.EmployeeMapper;
 import com.paulo.comp_time.repositories.EmployeeRepository;
+import com.paulo.comp_time.repositories.JobPositionRepository;
+import com.paulo.comp_time.repositories.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,25 +24,73 @@ import java.util.List;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final SectorRepository sectorRepository;
+    private final JobPositionRepository jobPositionRepository;
+    private final EmployeeMapper employeeMapper;
 
-    public List<Employee> getAll(boolean includeInactive) {
+    public List<EmployeeResponse> getAll(boolean includeInactive) {
+        List<Employee> employees = new ArrayList<>();
+
         if (includeInactive) {
-            return employeeRepository.findAll();
+            employees = employeeRepository.findAll();
+        } else {
+            employees = employeeRepository.findAllByActiveTrue();
         }
 
-        return employeeRepository.findAllByActiveTrue();
+        List<EmployeeResponse> employeeResponses = employees
+                .stream()
+                .map(employee -> employeeMapper.toResponse(employee))
+                .toList();
+
+        return employeeResponses;
     }
 
-    public Employee getById(Long id) {
-        return employeeRepository.findById(id)
+    public EmployeeResponse getById(Long id) {
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+
+        return employeeMapper.toResponse(employee);
     }
 
-    public Employee create(Employee employee) {
-        if (!employeeRepository.findByCpf(employee.getCpf()).isEmpty()) {
+    public EmployeeResponse create(EmployeeRequest request) {
+        if (!employeeRepository.findByCpf(request.cpf()).isEmpty()) {
             throw  new EmployeeAlreadyExistsException("The employee's CPF is already registered");
         }
 
-        return employeeRepository.save(employee);
+        Sector sector = sectorRepository.findById(request.sectorId())
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        JobPosition jobPosition = jobPositionRepository.findById(request.jobPositionId())
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        Employee employee = employeeMapper.toEntity(request, sector, jobPosition);
+
+        employeeRepository.save(employee);
+
+        return employeeMapper.toResponse(employee);
+    }
+
+    public EmployeeResponse update(Long id, EmployeeRequest request) {
+        employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
+
+        employeeRepository.findByCpf(request.cpf())
+                .ifPresent(existing -> {
+                    if (!existing.getId().equals(id)) {
+                        throw  new EmployeeAlreadyExistsException("The employee's CPF is already registered");
+                    }
+                });
+
+        Sector sector = sectorRepository.findById(request.sectorId())
+                .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        JobPosition jobPosition = jobPositionRepository.findById(request.jobPositionId())
+                .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        Employee employee = employeeMapper.toEntity(request, sector, jobPosition);
+
+        employeeRepository.save(employee);
+
+        return employeeMapper.toResponse(employee);
     }
 }

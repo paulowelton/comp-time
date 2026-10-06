@@ -13,8 +13,8 @@ public record EmployeeRequest(
         String cpf,
 
         @NotNull(message = "Sector ID is required")
-        Integer sectorId,
+        Long sectorId,
 
         @NotNull(message = "Job position ID is required")
-        Integer jobPositionId
+        Long jobPositionId
 ) { }

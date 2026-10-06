@@ -17,20 +17,27 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Employee {
 
+    public Employee(String name, String cpf, Sector sectorId, JobPosition jobPositionId) {
+        this.name = name;
+        this.cpf = cpf;
+        this.sectorId = sectorId;
+        this.jobPositionId = jobPositionId;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String cpf;
-    private int sectorId;
-    private int jobPositionId;
-    private boolean active;
 
-    public Employee(String name, String cpf, Integer sectorId, Integer jobPositionId) {
-        this.name = name;
-        this.cpf = cpf;
-        this.sectorId = sectorId;
-        this.jobPositionId = jobPositionId;
-    }
+    @ManyToOne
+    @JoinColumn(name = "sector_id", nullable = false)
+    private Sector sectorId;
+
+    @ManyToOne
+    @JoinColumn(name = "job_position_id", nullable = false)
+    private JobPosition jobPositionId;
+
+    private boolean active;
 }
