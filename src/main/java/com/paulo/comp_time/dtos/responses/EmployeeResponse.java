@@ -1,7 +1,7 @@
 package com.paulo.comp_time.dtos.responses;
 
 public record EmployeeResponse(
-    String id,
+    Long id,
     String name,
     String cpf,
     int sectorId,
