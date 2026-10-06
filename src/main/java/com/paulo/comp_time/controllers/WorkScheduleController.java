@@ -1,10 +1,13 @@
 package com.paulo.comp_time.controllers;
 
+import com.paulo.comp_time.domain.entities.WorkSchedule;
+import com.paulo.comp_time.dtos.requests.WorkScheduleRequest;
 import com.paulo.comp_time.dtos.responses.WorkScheduleResponse;
 import com.paulo.comp_time.mappers.WorkScheduleMapper;
 import com.paulo.comp_time.services.WorkScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,5 +45,14 @@ public class WorkScheduleController {
         );
     }
 
+    @PostMapping
+    public ResponseEntity<WorkScheduleResponse> create(
+            @RequestBody @Valid WorkScheduleRequest request) {
 
+        WorkSchedule workSchedule = workScheduleService.create(workScheduleMapper.toEntity(request));
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(workScheduleMapper.toResponse(workSchedule));
+    }
 }

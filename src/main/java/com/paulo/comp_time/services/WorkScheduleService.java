@@ -6,6 +6,7 @@ import com.paulo.comp_time.repositories.WorkScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -25,6 +26,17 @@ public class WorkScheduleService {
     public WorkSchedule getById(String id) {
         return workScheduleRepository.findById(id)
                 .orElseThrow(() -> new WorkScheduleNotFoundException(("Work schedule not found")));
+    }
+
+    public WorkSchedule create(WorkSchedule workSchedule) {
+        int expectedSeconds = Math.toIntExact(Duration.between(
+                workSchedule.getStartTime(),
+                workSchedule.getEndTime()).toSeconds()
+                - workSchedule.getBreakSeconds());
+
+        workSchedule.setExpectedSeconds(expectedSeconds);
+
+        return workSchedule;
     }
 
 
