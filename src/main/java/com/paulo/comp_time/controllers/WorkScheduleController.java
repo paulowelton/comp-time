@@ -55,4 +55,19 @@ public class WorkScheduleController {
                 .status(HttpStatus.CREATED)
                 .body(workScheduleMapper.toResponse(workSchedule));
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WorkScheduleResponse> update(
+            @PathVariable String id,
+            @RequestBody @Valid WorkScheduleRequest request) {
+
+        WorkSchedule workSchedule = workScheduleService.update(
+                id,
+                workScheduleMapper.toEntity(request)
+        );
+
+        return ResponseEntity.ok(
+                workScheduleMapper.toResponse(workSchedule)
+        );
+    }
 }

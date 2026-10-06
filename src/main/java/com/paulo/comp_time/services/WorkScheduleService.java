@@ -1,6 +1,7 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.WorkSchedule;
+import com.paulo.comp_time.exceptions.WorkScheduleAlreadyExists;
 import com.paulo.comp_time.exceptions.WorkScheduleNotFoundException;
 import com.paulo.comp_time.repositories.WorkScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,30 @@ public class WorkScheduleService {
         return workSchedule;
     }
 
+    public WorkSchedule update(String id, WorkSchedule updatedWorkSchedule) {
+        WorkSchedule workSchedule = workScheduleRepository.findById(id)
+                .orElseThrow(() -> new WorkScheduleNotFoundException(("Work schedule not found")));
 
+        if (workScheduleRepository.existsByNameAndIdNot(
+                updatedWorkSchedule.getName(),
+                workSchedule.getId())) {
+
+            throw new WorkScheduleAlreadyExists("Work shedule already exists");
+        }
+
+        workSchedule.setName(updatedWorkSchedule.getName());
+        workSchedule.setStartTime(updatedWorkSchedule.getStartTime());
+        workSchedule.setEndTime(updatedWorkSchedule.getEndTime());
+        workSchedule.setBreakSeconds(updatedWorkSchedule.getBreakSeconds());
+
+        int expectedSeconds = Math.toIntExact(Duration.between(
+                workSchedule.getStartTime(),
+                workSchedule.getEndTime()
+        ).toSeconds() - workSchedule.getBreakSeconds());
+
+        workSchedule.setExpectedSeconds(expectedSeconds);
+
+        return workScheduleRepository.save(workSchedule);
+    }
 
 }
