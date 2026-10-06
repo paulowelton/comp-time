@@ -1,4 +1,8 @@
 package com.paulo.comp_time.dtos.responses;
 
-public record UserRegisterResponse(String name, String email) {
+public record UserRegisterResponse(
+        Long id,
+        String name,
+        String email,
+        Boolean active) {
 }

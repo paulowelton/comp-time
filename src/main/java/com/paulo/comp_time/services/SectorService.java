@@ -16,7 +16,7 @@ public class SectorService {
 
     private final SectorRepository sectorRepository;
 
-    public List<Sector> getAll(boolean includeInactive) {
+    public List<SectorResponse> getAll(boolean includeInactive) {
 
         if (includeInactive) {
             return sectorRepository.findAll();
