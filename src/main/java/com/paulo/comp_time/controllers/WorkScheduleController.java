@@ -59,14 +59,14 @@ public class WorkScheduleController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/active")
+    @PostMapping("/{id}/activate")
     public ResponseEntity<WorkScheduleResponse> active(
             @PathVariable Long id) {
 
         return ResponseEntity.ok(workScheduleService.active(id));
     }
 
-    @PostMapping("/{id}/deactive")
+    @PostMapping("/{id}/deactivate")
     public ResponseEntity<WorkScheduleResponse> deactive(
             @PathVariable Long id) {
 
