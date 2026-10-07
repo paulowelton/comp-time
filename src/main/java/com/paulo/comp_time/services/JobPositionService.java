@@ -2,7 +2,8 @@ package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.JobPosition;
 import com.paulo.comp_time.dtos.requests.JobPositionRequest;
-import com.paulo.comp_time.exceptions.JobPositionAlreadyExists;
+import com.paulo.comp_time.dtos.responses.JobPositionResponse;
+import com.paulo.comp_time.exceptions.JobPositionAlreadyExistsException;
 import com.paulo.comp_time.exceptions.JobPositionNotFoundException;
 import com.paulo.comp_time.repositories.JobPositionRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,64 +17,101 @@ public class JobPositionService {
 
     private final JobPositionRepository jobPositionRepository;
 
-    public List<JobPosition> getAll(boolean includeInactive) {
+    public List<JobPositionResponse> getAll(boolean includeInactive) {
 
-        if(includeInactive) {
-            return jobPositionRepository.findAll();
-        }
+        List<JobPosition> jobPositions = includeInactive
+                ? jobPositionRepository.findAll()
+                : jobPositionRepository.findAllByActiveTrue();
 
-        return jobPositionRepository.findAllByActiveTrue();
+
+        return jobPositions.stream()
+                .map(jobPosition -> new JobPositionResponse(
+                        jobPosition.getId(),
+                        jobPosition.getName(),
+                        jobPosition.getActive()
+                ))
+                .toList();
     }
 
-    public JobPosition getById(String id) {
-        return jobPositionRepository.findById(id)
+    public JobPositionResponse getById(Long id) {
+        JobPosition jobPosition = jobPositionRepository.findById(id)
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
+
+        return new JobPositionResponse(
+                jobPosition.getId(),
+                jobPosition.getName(),
+                jobPosition.getActive()
+        );
     }
 
-    public JobPosition create(JobPositionRequest request) {
+    public JobPositionResponse create(JobPositionRequest request) {
         if (!jobPositionRepository.findByName(request.name()).isEmpty()) {
-            throw new JobPositionAlreadyExists("Job position already exists");
+            throw new JobPositionAlreadyExistsException("Job position already exists");
         }
 
         JobPosition jobPosition = new JobPosition(
                 request.name()
         );
 
-        return jobPositionRepository.save(jobPosition);
+        jobPositionRepository.save(jobPosition);
+
+        return new JobPositionResponse(
+                jobPosition.getId(),
+                jobPosition.getName(),
+                jobPosition.getActive()
+        );
     }
 
-    public JobPosition update(String id, JobPositionRequest request) {
+    public JobPositionResponse update(Long id, JobPositionRequest request) {
         JobPosition jobPosition = jobPositionRepository.findById(id)
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
 
         jobPosition.setName(request.name());
 
-        return jobPositionRepository.save(jobPosition);
+        jobPositionRepository.save(jobPosition);
+
+        return  new JobPositionResponse(
+                jobPosition.getId(),
+                jobPosition.getName(),
+                jobPosition.getActive()
+        );
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         JobPosition jobPosition = jobPositionRepository.findById(id)
                         .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
 
         jobPositionRepository.delete(jobPosition);
     }
 
-    public JobPosition deactivate(String id) {
+    public JobPositionResponse deactivate(Long id) {
         JobPosition jobPosition = jobPositionRepository.findById(id)
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
 
         jobPosition.setActive(false);
 
-        return jobPositionRepository.save(jobPosition);
+        jobPositionRepository.save(jobPosition);
+
+        return new JobPositionResponse(
+                jobPosition.getId(),
+                jobPosition.getName(),
+                jobPosition.getActive()
+        );
     }
 
-    public JobPosition activate(String id) {
+    public JobPositionResponse activate(Long id) {
         JobPosition jobPosition = jobPositionRepository.findById(id)
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
 
         jobPosition.setActive(true);
 
-        return jobPositionRepository.save(jobPosition);
+        jobPositionRepository.save(jobPosition);
+
+        return new JobPositionResponse(
+                jobPosition.getId(),
+                jobPosition.getName(),
+                jobPosition.getActive()
+        );
     }
 
 }

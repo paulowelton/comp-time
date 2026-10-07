@@ -23,61 +23,36 @@ public class JobPositionController {
     public ResponseEntity<List<JobPositionResponse>> getAll(
             @RequestParam(defaultValue = "false") boolean includeInactive ) {
 
-        List<JobPositionResponse> jobPositions = jobPositionService.getAll(includeInactive)
-                .stream()
-                .map(jobPosition -> new JobPositionResponse(
-                        jobPosition.getName(),
-                        jobPosition.getActive()
-                ))
-                .toList();
-
-        return ResponseEntity.ok(jobPositions);
+        return ResponseEntity.ok(jobPositionService.getAll(includeInactive));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<JobPositionResponse> getById(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        JobPosition jobPosition = jobPositionService.getById(id);
-
-        return ResponseEntity.ok(new JobPositionResponse(
-                jobPosition.getName(),
-                jobPosition.getActive()
-        ));
+        return ResponseEntity.ok(jobPositionService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<JobPositionResponse> create(
             @RequestBody @Valid JobPositionRequest request) {
 
-        JobPosition jobPosition = jobPositionService.create(request);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new JobPositionResponse(
-                        jobPosition.getName(),
-                        jobPosition.getActive()
-                ));
+                .body(jobPositionService.create(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<JobPositionResponse> update(
             @RequestBody @Valid JobPositionRequest request,
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        JobPosition jobPosition = jobPositionService.update(id, request);
-
-        return ResponseEntity.ok(
-                new JobPositionResponse(
-                        jobPosition.getName(),
-                        jobPosition.getActive()
-                )
-        );
+        return ResponseEntity.ok(jobPositionService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
         jobPositionService.delete(id);
 
@@ -86,25 +61,15 @@ public class JobPositionController {
 
     @PostMapping("/{id}/deactivate")
     public ResponseEntity<JobPositionResponse> deactivate(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        JobPosition jobPosition = jobPositionService.deactivate(id);
-
-        return ResponseEntity.ok(new JobPositionResponse(
-                jobPosition.getName(),
-                jobPosition.getActive()
-        ));
+        return ResponseEntity.ok(jobPositionService.deactivate(id));
     }
 
     @PostMapping("/{id}/activate")
     public ResponseEntity<JobPositionResponse> activate(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        JobPosition jobPosition = jobPositionService.activate(id);
-
-        return ResponseEntity.ok(new JobPositionResponse(
-                jobPosition.getName(),
-                jobPosition.getActive()
-        ));
+        return ResponseEntity.ok(jobPositionService.activate(id));
     }
 }
