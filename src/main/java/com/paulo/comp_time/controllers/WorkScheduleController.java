@@ -1,6 +1,5 @@
 package com.paulo.comp_time.controllers;
 
-import com.paulo.comp_time.domain.entities.WorkSchedule;
 import com.paulo.comp_time.dtos.requests.WorkScheduleRequest;
 import com.paulo.comp_time.dtos.responses.WorkScheduleResponse;
 import com.paulo.comp_time.services.WorkScheduleService;
