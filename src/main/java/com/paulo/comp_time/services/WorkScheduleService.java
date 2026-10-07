@@ -80,6 +80,14 @@ public class WorkScheduleService {
         return workScheduleMapper.toResponse(workSchedule);
     }
 
+    public void delete(Long id) {
+        WorkSchedule workSchedule = workScheduleRepository.findById(id)
+                .orElseThrow(() ->
+                        new WorkScheduleNotFoundException("Work schedule not found"));
+
+        workScheduleRepository.delete(workSchedule);
+    }
+
     public WorkScheduleResponse active(Long id) {
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() ->

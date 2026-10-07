@@ -50,6 +50,15 @@ public class WorkScheduleController {
         return ResponseEntity.ok(workScheduleService.update(id, request));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id) {
+
+        workScheduleService.delete(id);
+
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/{id}/active")
     public ResponseEntity<WorkScheduleResponse> active(
             @PathVariable Long id) {
