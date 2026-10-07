@@ -1,6 +1,5 @@
 package com.paulo.comp_time.controllers;
 
-import com.paulo.comp_time.domain.entities.Sector;
 import com.paulo.comp_time.dtos.requests.SectorRequest;
 import com.paulo.comp_time.dtos.responses.SectorResponse;
 import com.paulo.comp_time.services.SectorService;
@@ -23,49 +22,35 @@ public class SectorController {
     public ResponseEntity<List<SectorResponse>> getAll(
             @RequestParam(defaultValue = "false") boolean includeInactive) {
 
-        List<SectorResponse> sectors = sectorService
-                .getAll(includeInactive)
-                .stream()
-                .map(sector -> new SectorResponse(
-                        sector.getName(),
-                        sector.getActive()
-                ))
-                .toList();
-
-        return ResponseEntity.ok(sectors);
+        return ResponseEntity.ok(sectorService.getAll(includeInactive));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SectorResponse> getById(@PathVariable String id) {
+    public ResponseEntity<SectorResponse> getById(
+            @PathVariable Long id) {
 
-        Sector sector = sectorService.getById(id);
-
-        return ResponseEntity.ok(new SectorResponse(sector.getName(), sector.getActive()));
+        return ResponseEntity.ok(sectorService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<SectorResponse> create(@RequestBody @Valid SectorRequest request) {
 
-        Sector sector = sectorService.create(request);
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new SectorResponse(sector.getName(), sector.getActive()));
+                .body(sectorService.create(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SectorResponse> update(
             @RequestBody @Valid SectorRequest request,
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        Sector sector = sectorService.update(id, request);
-
-        return  ResponseEntity.ok(new SectorResponse(sector.getName(), sector.getActive()));
+        return ResponseEntity.ok(sectorService.update(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable String id
+            @PathVariable Long id
     ) {
 
         sectorService.delete(id);
@@ -75,24 +60,15 @@ public class SectorController {
 
     @PostMapping("/{id}/deactivate")
     public ResponseEntity<SectorResponse> deactivate(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        Sector sector = sectorService.deactivate(id);
-
-        return ResponseEntity.ok(new SectorResponse(sector.getName(), sector.getActive()));
+        return ResponseEntity.ok(sectorService.deactivate(id));
     }
 
     @PostMapping("/{id}/activate")
     public ResponseEntity<SectorResponse> activate(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        Sector sector = sectorService.activate(id);
-
-        return ResponseEntity.ok(
-                new SectorResponse(
-                        sector.getName(),
-                        sector.getActive()
-                )
-        );
+        return ResponseEntity.ok(sectorService.activate(id));
     }
 }
