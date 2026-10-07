@@ -28,9 +28,27 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", exception.getMessage()));
     }
 
-    @ExceptionHandler(JobPositionAlreadyExists.class)
+    @ExceptionHandler(JobPositionAlreadyExistsException.class)
     public ResponseEntity<Map<String, String>> handleJobPositionAlreadyExists(
-            JobPositionAlreadyExists exception) {
+            JobPositionAlreadyExistsException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
+    @ExceptionHandler(WorkScheduleNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleWorkScheduleNotFound(
+            WorkScheduleNotFoundException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("message", exception.getMessage()));
+    }
+
+    @ExceptionHandler(WorkScheduleAlreadyExists.class)
+    public ResponseEntity<Map<String, String>> handleWorkScheduleAlreadyExists(
+            WorkScheduleAlreadyExists exception) {
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

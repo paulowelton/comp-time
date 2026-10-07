@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "work_schedules")
@@ -18,12 +18,12 @@ public class WorkSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String name;
-    private LocalDate start_time;
-    private LocalDate end_time;
-    private int break_seconds;
-    private int expected_seconds;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private int breakSeconds = 0;
+    private int expectedSeconds;
     private boolean active = true;
 }

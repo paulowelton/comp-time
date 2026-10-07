@@ -8,6 +8,7 @@ import com.paulo.comp_time.repositories.SectorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,38 +17,61 @@ public class SectorService {
 
     private final SectorRepository sectorRepository;
 
-    public List<Sector> getAll(boolean includeInactive) {
+    public List<SectorResponse> getAll(boolean includeInactive) {
+        List<Sector> sectors = includeInactive
+                ? sectorRepository.findAll()
+                : sectorRepository.findAllByActiveTrue();
 
-        if (includeInactive) {
-            return sectorRepository.findAll();
-        }
-
-        return sectorRepository.findAllByActiveTrue();
+        return sectors.stream()
+                .map(sector -> new SectorResponse(
+                        sector.getId(),
+                        sector.getName(),
+                        sector.getActive()
+                ))
+                .toList();
     }
 
-    public Sector getById(String id) {
-        return sectorRepository.findById(id)
+    public SectorResponse getById(Long id) {
+        Sector sector = sectorRepository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
+
+        return new SectorResponse(
+                sector.getId(),
+                sector.getName(),
+                sector.getActive()
+        );
     }
 
-    public Sector create(SectorRequest request) {
+    public SectorResponse create(SectorRequest request) {
         Sector sector = new Sector(
                 request.name()
         );
 
-        return sectorRepository.save(sector);
+        sectorRepository.save(sector);
+
+        return new SectorResponse(
+                sector.getId(),
+                sector.getName(),
+                sector.getActive()
+        );
     }
 
-    public Sector update(String id, SectorRequest request) {
+    public SectorResponse update(Long id, SectorRequest request) {
         Sector sector = sectorRepository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
 
         sector.setName(request.name());
 
-        return sectorRepository.save(sector);
+        sectorRepository.save(sector);
+
+        return new SectorResponse(
+                sector.getId(),
+                sector.getName(),
+                sector.getActive()
+        );
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
 
         Sector sector = sectorRepository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
@@ -55,24 +79,36 @@ public class SectorService {
         sectorRepository.delete(sector);
     }
 
-    public Sector deactivate(String id) {
+    public SectorResponse deactivate(Long id) {
 
         Sector sector = sectorRepository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
 
         sector.setActive(false);
 
-        return sectorRepository.save(sector);
+        sectorRepository.save(sector);
+
+        return new SectorResponse(
+                sector.getId(),
+                sector.getName(),
+                sector.getActive()
+        );
     }
 
-    public Sector activate(String id) {
+    public SectorResponse activate(Long id) {
 
         Sector sector = sectorRepository.findById(id)
                 .orElseThrow(() -> new SectorNotFoundException("Sector not found"));
 
         sector.setActive(true);
 
-        return sectorRepository.save(sector);
+        sectorRepository.save(sector);
+
+        return new SectorResponse(
+                sector.getId(),
+                sector.getName(),
+                sector.getActive()
+        );
     }
 
 }
