@@ -1,8 +1,11 @@
 package com.paulo.comp_time.services;
 
 import com.paulo.comp_time.domain.entities.WorkSchedule;
+import com.paulo.comp_time.dtos.requests.WorkScheduleRequest;
+import com.paulo.comp_time.dtos.responses.WorkScheduleResponse;
 import com.paulo.comp_time.exceptions.WorkScheduleAlreadyExists;
 import com.paulo.comp_time.exceptions.WorkScheduleNotFoundException;
+import com.paulo.comp_time.mappers.WorkScheduleMapper;
 import com.paulo.comp_time.repositories.WorkScheduleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,21 +18,28 @@ import java.util.List;
 public class WorkScheduleService {
 
     private final WorkScheduleRepository workScheduleRepository;
+    private final WorkScheduleMapper workScheduleMapper;
 
-    public List<WorkSchedule> getAll(boolean includeInactive) {
-        if (includeInactive) {
-            return workScheduleRepository.findAll();
-        }
+    public List<WorkScheduleResponse> getAll(boolean includeInactive) {
+        List<WorkSchedule> workSchedules = includeInactive
+                ?  workScheduleRepository.findAll()
+                :  workScheduleRepository.findAllByActiveTrue();
 
-        return workScheduleRepository.findAllByActiveTrue();
+        return workSchedules.stream()
+                .map(workSchedule -> workScheduleMapper.toResponse(workSchedule))
+                .toList();
     }
 
-    public WorkSchedule getById(String id) {
-        return workScheduleRepository.findById(id)
+    public WorkScheduleResponse getById(Long id) {
+        WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() -> new WorkScheduleNotFoundException(("Work schedule not found")));
+
+        return workScheduleMapper.toResponse(workSchedule);
     }
 
-    public WorkSchedule create(WorkSchedule workSchedule) {
+    public WorkScheduleResponse create(WorkScheduleRequest workScheduleRequest) {
+        WorkSchedule workSchedule = workScheduleMapper.toEntity(workScheduleRequest);
+
         int expectedSeconds = Math.toIntExact(Duration.between(
                 workSchedule.getStartTime(),
                 workSchedule.getEndTime()).toSeconds()
@@ -37,33 +47,36 @@ public class WorkScheduleService {
 
         workSchedule.setExpectedSeconds(expectedSeconds);
 
-        return workSchedule;
+        return workScheduleMapper.toResponse(workSchedule);
     }
 
-    public WorkSchedule update(String id, WorkSchedule updatedWorkSchedule) {
+    public WorkScheduleResponse update(Long id, WorkScheduleRequest request) {
+
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
-                .orElseThrow(() -> new WorkScheduleNotFoundException(("Work schedule not found")));
+                .orElseThrow(() ->
+                        new WorkScheduleNotFoundException("Work schedule not found")
+                );
 
-        if (workScheduleRepository.existsByNameAndIdNot(
-                updatedWorkSchedule.getName(),
-                workSchedule.getId())) {
-
-            throw new WorkScheduleAlreadyExists("Work shedule already exists");
+        if (workScheduleRepository.existsByNameAndIdNot(request.name(), id)) {
+            throw new WorkScheduleAlreadyExists("Work schedule already exists");
         }
 
-        workSchedule.setName(updatedWorkSchedule.getName());
-        workSchedule.setStartTime(updatedWorkSchedule.getStartTime());
-        workSchedule.setEndTime(updatedWorkSchedule.getEndTime());
-        workSchedule.setBreakSeconds(updatedWorkSchedule.getBreakSeconds());
+        workSchedule.setName(request.name());
+        workSchedule.setStartTime(request.startTime());
+        workSchedule.setEndTime(request.endTime());
+        workSchedule.setBreakSeconds(request.breakSeconds());
 
-        int expectedSeconds = Math.toIntExact(Duration.between(
-                workSchedule.getStartTime(),
-                workSchedule.getEndTime()
-        ).toSeconds() - workSchedule.getBreakSeconds());
+        int expectedSeconds = Math.toIntExact(
+                Duration.between(
+                        workSchedule.getStartTime(),
+                        workSchedule.getEndTime()
+                ).toSeconds() - workSchedule.getBreakSeconds()
+        );
 
         workSchedule.setExpectedSeconds(expectedSeconds);
 
-        return workScheduleRepository.save(workSchedule);
-    }
+        workScheduleRepository.save(workSchedule);
 
+        return workScheduleMapper.toResponse(workSchedule);
+    }
 }

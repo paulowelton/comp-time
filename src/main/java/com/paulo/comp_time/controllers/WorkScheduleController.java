@@ -3,7 +3,6 @@ package com.paulo.comp_time.controllers;
 import com.paulo.comp_time.domain.entities.WorkSchedule;
 import com.paulo.comp_time.dtos.requests.WorkScheduleRequest;
 import com.paulo.comp_time.dtos.responses.WorkScheduleResponse;
-import com.paulo.comp_time.mappers.WorkScheduleMapper;
 import com.paulo.comp_time.services.WorkScheduleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,54 +19,34 @@ public class WorkScheduleController {
 
     private final WorkScheduleService workScheduleService;
 
-    private final WorkScheduleMapper workScheduleMapper;
-
     @GetMapping
     public ResponseEntity<List<WorkScheduleResponse>> getAll(
             @RequestParam(defaultValue = "false") boolean includeInactive) {
 
-        List<WorkScheduleResponse> workSchedules = workScheduleService.getAll(includeInactive)
-                .stream()
-                .map(workSchedule -> workScheduleMapper.toResponse(workSchedule))
-                .toList();
-
-        return ResponseEntity.ok(workSchedules);
+        return ResponseEntity.ok(workScheduleService.getAll(includeInactive));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<WorkScheduleResponse> getById(
-            @PathVariable String id) {
+            @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                workScheduleMapper.toResponse(
-                        workScheduleService.getById(id)
-                )
-        );
+        return ResponseEntity.ok(workScheduleService.getById(id));
     }
 
     @PostMapping
     public ResponseEntity<WorkScheduleResponse> create(
             @RequestBody @Valid WorkScheduleRequest request) {
 
-        WorkSchedule workSchedule = workScheduleService.create(workScheduleMapper.toEntity(request));
-
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(workScheduleMapper.toResponse(workSchedule));
+                .body(workScheduleService.create(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<WorkScheduleResponse> update(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody @Valid WorkScheduleRequest request) {
 
-        WorkSchedule workSchedule = workScheduleService.update(
-                id,
-                workScheduleMapper.toEntity(request)
-        );
-
-        return ResponseEntity.ok(
-                workScheduleMapper.toResponse(workSchedule)
-        );
+        return ResponseEntity.ok(workScheduleService.update(id, request));
     }
 }

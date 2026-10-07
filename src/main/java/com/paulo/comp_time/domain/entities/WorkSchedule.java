@@ -18,7 +18,7 @@ public class WorkSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String name;
     private LocalTime startTime;

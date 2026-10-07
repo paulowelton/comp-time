@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, String> {
+public interface WorkScheduleRepository extends JpaRepository<WorkSchedule, Long> {
     List<WorkSchedule> findAllByActiveTrue();
-    boolean existsByNameAndIdNot(String name, String id);
+    boolean existsByNameAndIdNot(String name, Long id);
 }
