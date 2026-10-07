@@ -47,7 +47,9 @@ public class WorkScheduleService {
 
         workSchedule.setExpectedSeconds(expectedSeconds);
 
-        return workScheduleMapper.toResponse(workSchedule);
+        return workScheduleMapper.toResponse(
+                workScheduleRepository.save(workSchedule)
+        );
     }
 
     public WorkScheduleResponse update(Long id, WorkScheduleRequest request) {
