@@ -1,6 +1,5 @@
 package com.paulo.comp_time.controllers;
 
-import com.paulo.comp_time.domain.entities.Employee;
 import com.paulo.comp_time.dtos.requests.EmployeeRequest;
 import com.paulo.comp_time.dtos.responses.EmployeeResponse;
 import com.paulo.comp_time.services.EmployeeService;

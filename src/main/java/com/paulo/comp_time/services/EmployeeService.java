@@ -29,13 +29,9 @@ public class EmployeeService {
     private final EmployeeMapper employeeMapper;
 
     public List<EmployeeResponse> getAll(boolean includeInactive) {
-        List<Employee> employees = new ArrayList<>();
-
-        if (includeInactive) {
-            employees = employeeRepository.findAll();
-        } else {
-            employees = employeeRepository.findAllByActiveTrue();
-        }
+        List<Employee> employees = includeInactive
+                ? employeeRepository.findAll()
+                : employeeRepository.findAllByActiveTrue();
 
         List<EmployeeResponse> employeeResponses = employees
                 .stream()
