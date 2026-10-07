@@ -49,4 +49,18 @@ public class WorkScheduleController {
 
         return ResponseEntity.ok(workScheduleService.update(id, request));
     }
+
+    @PostMapping("/{id}/active")
+    public ResponseEntity<WorkScheduleResponse> active(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(workScheduleService.active(id));
+    }
+
+    @PostMapping("/{id}/deactive")
+    public ResponseEntity<WorkScheduleResponse> deactive(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(workScheduleService.deactive(id));
+    }
 }

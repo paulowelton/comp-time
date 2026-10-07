@@ -79,4 +79,24 @@ public class WorkScheduleService {
 
         return workScheduleMapper.toResponse(workSchedule);
     }
+
+    public WorkScheduleResponse active(Long id) {
+        WorkSchedule workSchedule = workScheduleRepository.findById(id)
+                .orElseThrow(() ->
+                        new WorkScheduleNotFoundException("Work schedule not found"));
+
+        workSchedule.setActive(true);
+
+        return workScheduleMapper.toResponse(workSchedule);
+    }
+
+    public WorkScheduleResponse deactive(Long id) {
+        WorkSchedule workSchedule = workScheduleRepository.findById(id)
+                .orElseThrow(() ->
+                        new WorkScheduleNotFoundException("Work schedule not found"));
+
+        workSchedule.setActive(false);
+
+        return workScheduleMapper.toResponse(workSchedule);
+    }
 }
