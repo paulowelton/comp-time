@@ -66,7 +66,7 @@ public class EmployeeService {
     }
 
     public EmployeeResponse update(Long id, EmployeeRequest request) {
-        employeeRepository.findById(id)
+        Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new EmployeeNotFoundException("Employee not found"));
 
         employeeRepository.findByCpf(request.cpf())
@@ -82,7 +82,10 @@ public class EmployeeService {
         JobPosition jobPosition = jobPositionRepository.findById(request.jobPositionId())
                 .orElseThrow(() -> new JobPositionNotFoundException("Job position not found"));
 
-        Employee employee = employeeMapper.toEntity(request, sector, jobPosition);
+        employee.setName(request.name());
+        employee.setCpf(request.cpf());
+        employee.setSectorId(sector);
+        employee.setJobPositionId(jobPosition);
 
         employeeRepository.save(employee);
 

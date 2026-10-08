@@ -39,5 +39,5 @@ public class Employee {
     @JoinColumn(name = "job_position_id", nullable = false)
     private JobPosition jobPositionId;
 
-    private boolean active;
+    private boolean active = true;
 }
