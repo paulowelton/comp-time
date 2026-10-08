@@ -47,7 +47,7 @@ public class WorkScheduleService {
 
         workSchedule.setExpectedSeconds(expectedSeconds);
 
-        return workScheduleMapper.toResponse(workScheduleRepository.save(workSchedule));
+        return workScheduleMapper.toResponse(workSchedule);
     }
 
     public WorkScheduleResponse update(Long id, WorkScheduleRequest request) {
@@ -88,23 +88,23 @@ public class WorkScheduleService {
         workScheduleRepository.delete(workSchedule);
     }
 
-    public WorkScheduleResponse activate(Long id) {
+    public WorkScheduleResponse active(Long id) {
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() ->
                         new WorkScheduleNotFoundException("Work schedule not found"));
 
         workSchedule.setActive(true);
 
-        return workScheduleMapper.toResponse(workScheduleRepository.save(workSchedule));
+        return workScheduleMapper.toResponse(workSchedule);
     }
 
-    public WorkScheduleResponse deactivate(Long id) {
+    public WorkScheduleResponse deactive(Long id) {
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() ->
                         new WorkScheduleNotFoundException("Work schedule not found"));
 
         workSchedule.setActive(false);
 
-        return workScheduleMapper.toResponse(workScheduleRepository.save(workSchedule));
+        return workScheduleMapper.toResponse(workSchedule);
     }
 }
