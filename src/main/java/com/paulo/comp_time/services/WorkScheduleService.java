@@ -88,23 +88,23 @@ public class WorkScheduleService {
         workScheduleRepository.delete(workSchedule);
     }
 
-    public WorkScheduleResponse active(Long id) {
+    public WorkScheduleResponse activate(Long id) {
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() ->
                         new WorkScheduleNotFoundException("Work schedule not found"));
 
         workSchedule.setActive(true);
 
-        return workScheduleMapper.toResponse(workSchedule);
+        return workScheduleMapper.toResponse(workScheduleRepository.save(workSchedule));
     }
 
-    public WorkScheduleResponse deactive(Long id) {
+    public WorkScheduleResponse deactivate(Long id) {
         WorkSchedule workSchedule = workScheduleRepository.findById(id)
                 .orElseThrow(() ->
                         new WorkScheduleNotFoundException("Work schedule not found"));
 
         workSchedule.setActive(false);
 
-        return workScheduleMapper.toResponse(workSchedule);
+        return workScheduleMapper.toResponse(workScheduleRepository.save(workSchedule));
     }
 }
