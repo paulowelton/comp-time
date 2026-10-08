@@ -105,7 +105,7 @@ public class EmployeeService {
 
         employee.setActive(true);
 
-        return employeeMapper.toResponse(employee);
+        return employeeMapper.toResponse(employeeRepository.save(employee));
     }
 
     public EmployeeResponse deactivate(Long id) {
@@ -114,6 +114,6 @@ public class EmployeeService {
 
         employee.setActive(false);
 
-        return employeeMapper.toResponse(employee);
+        return employeeMapper.toResponse(employeeRepository.save(employee));
     }
 }
